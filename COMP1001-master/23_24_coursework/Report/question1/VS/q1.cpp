@@ -28,6 +28,7 @@
 void initialize();
 void routine1(float alpha, float beta);
 void routine2(float alpha, float beta);
+void ADD_SSE(float alpha, float beta);
 
 __declspec(align(64)) float  y[M], z[M] ;
 __declspec(align(64)) float A[N][N], x[N], w[N];
@@ -58,6 +59,16 @@ int main() {
     run_time = omp_get_wtime() - start_time; //end timer
     printf("\n Time elapsed is %f secs \n %e FLOPs achieved\n", run_time, (double)(ARITHMETIC_OPERATIONS2) / ((double)run_time / TIMES2));
 
+    initialize();
+
+    printf("\nRoutine1 vectorised:");
+    start_time = omp_get_wtime(); //start timer
+
+    for (t = 0; t < TIMES1; t++)
+        ADD_SSE(alpha, beta);
+
+    run_time = omp_get_wtime() - start_time; //end timer
+    printf("\n Time elapsed is %f secs \n %e FLOPs achieved\n", run_time, (double)(ARITHMETIC_OPERATIONS1) / ((double)run_time / TIMES1));
 
 
     return 0;
@@ -96,8 +107,10 @@ void routine1(float alpha, float beta) {
     unsigned int i;
 
 
-    for (i = 0; i < M; i++)
+    for (i = 0; i < M; i++) {
         y[i] = alpha * y[i] + beta * z[i];
+    }
+    printf("%f, %f, %f", y[1], y[5], y[10]);
 
 }
 
@@ -113,6 +126,27 @@ void routine2(float alpha, float beta) {
 
 }
 
+void ADD_SSE(float alpha, float beta) {
+    unsigned int i;
+    __m128 num1, num2, num3, num4, num5, num6, num7;
+
+    for (i = 0, i < (M/4)*4; i += 4) {
+        num1 = _mm_loadu_ps(&y[i]);
+        num2 = _mm_set_ps1(alpha);
+        num3 = _mm_mul_ps(num2, num1);
+        num4 = _mm_loadu_ps(&z[i]);
+        num5 = _mm_set_ps1(beta);
+        num6 = _mm_mul_ps(num4, num5);
+        num7 = _mm_add_ps(num3, num6);
+        _mm_storeu_ps(&y[i], num7);
+
+    }
+    printf("%f, %f, %f", y[1], y[5], y[10]);
+}
 
 
+
+
+
+      
 
