@@ -26,9 +26,9 @@ void openfile(const char* filename, FILE** finput);
 int getint(FILE* fp);
 
 //CRITICAL POINT: images' paths - You need to change these paths
-#define IN "C:\\Users\\vboxuser\\source\\repos\\image_processing\\image_processing\\input_images\\a1.pgm"
-#define OUT "C:\\Users\\vboxuser\\source\\repos\\image_processing\\image_processing\\output_images\\blurred.pgm"
-#define OUT2 "C:\\Users\\vboxuser\\source\\repos\\image_processing\\image_processing\\output_images\\edge_detection.pgm"
+#define IN "C:\\Users\\vanes\\Documents\\CW1\\COMP1001\\COMP1001-master\\23_24_coursework\\Report\\question3\\VS\\code_to_start\\input_images"
+#define OUT "C:\\Users\\vanes\\Documents\\CW1\\COMP1001\\COMP1001-master\\23_24_coursework\\Report\\question3\\VS\\code_to_start\\output_images\\blurred.pgm"
+#define OUT2 "C:\\Users\\vanes\\Documents\\CW1\\COMP1001\\COMP1001-master\\23_24_coursework\\Report\\question3\\VS\\code_to_start\\output_images\\edge_detection.pgm"
 
 //IMAGE DIMENSIONS
 #define M 512  //cols
@@ -65,12 +65,31 @@ char header[100];
 errno_t err;
 
 int main() {
+	char inputImageBaseString[] = "a";
+	char blurredImageBaseString[] = "blurred";
+	char gradientImageBaseString[] = "edge_detection"; 
+	char extension[] = ".pgm";
+	for (int i = 0; i < 31; i++) {
+		char concatedInputImgaeFileName[1000];
 
+		sprintf_s(concatedInputImageFileName, "%s%d%s", inputImageBaseString, i, extensions);
+		memmov(concatedInputImageFileName + strlen(IN), concatedInputImageFileName, strlen(concatedInputImageFileName) + 1);
+		memcpy(concatedInputImageFileName, IN, strlen(IN));
+		read_image(IN);//read image from disc
+		Gaussian_Blur(); //blur the image (reduce noise)
+		Sobel(); //apply edge detection
 
-	read_image(IN);//read image from disc
+		char concatenatedImageBlurImageFileName[255];
 
-	Gaussian_Blur(); //blur the image (reduce noise)
-	Sobel(); //apply edge detection
+		sprintf_s(concatenatedBurImageFileName, "%s%d%s", blurredImageBaseString, i, extension);
+		memmove(concatenatedBlurImageFileName + strlen(OUT), concatenatedBlurImageFileName, strlen(concatenatedBlurImageFileName) + 1);
+		Memcpy(concatenatedBlurImageFileName, OUT, strlen(OUT));
+
+		char concatenatedGradientImageFileName[255];
+
+		sprintf_s(concatenatedGradientInputImageFileName, "%s%d%s", blurredImageBaseString, i, extensions);
+		memmove(concatenatedGradientImageFileName + strlen(OUT2), concatenatedGradientImageFileName, strlen(concatenatedGradientImageFileName));
+		memcpy(concantedatedGradientImageFileName, OUT2, strlen(OUT2));
 
 	write_image2(OUT, filt); //store output image to the disc
 	write_image2(OUT2, gradient); //store output image to the disc
